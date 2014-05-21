@@ -1,0 +1,31 @@
+Ejercicio N° 1:
+--------------
+Para resolver la primer parte del ejercicio, decidí plantear una solución dividida en varios módulos, agrupados por packages. Hago una breve reseña de los componentes principales y su función dentro de la solución.
+- com.bumeran.evaluacion.model: Contiene el modelo de dominio, como un POCO, al estilo DDD. En este paquete está la clase principal (Pedido).
+- com.bumeran.evaluacion.service: Representa una capa de servicios, la cual contiene la lógica de negocio. Además, agrega la utilización del cache (com.bumeran.evaluacion.cache.BumexMemcached). Puede inyectarse el DAO, para facilitar el desacoplamiento y el testing.
+-com.bumeran.evaluacion.daos: está la definición de PedidoDAO, con la definición de los métodos solicitados.
+
+Testing:
+- Los test unitarios se realizaron con JUnit.
+- Se utilizó mockito como framework de mocking (*)
+
+Otras observaciones:
+- com.bumeran.evaluacion.exceptions: excepciones técnicas/de negocio
+- com.bumeran.evaluacion.model.builders: Builders para facilitar la creación de entidades pertenecientes al modelo de dominio.
+- Se utilizó log4net para el loggeo de informacion. No se realizó la configuración de los appendes.
+- Las dependencias se gestionaron utilizando Maven 2.
+
+(*) No fue posible mockear BumexMemcached, por tratarse de un Singleton.
+
+Ejercicio N° 2:
+--------------
+Ante el crecimiento de la cantidad de entidades persistidas, pueden realizarse las siguientes optimizaciónes:
+DB Layer: 
+- Optimizar las conexiones, utilizando alguna estrategia de pooling. 
+- En el caso de utilizar algún ORM, realizar las optimizaciones indicadas por el proveedor. En el caso de la entidad "Pedido", no veo mejoras sustanciales
+- Utilización de caching (ya implementado mediante BumexMemcached)
+
+Base de Datos (asumiendo una modelo relacional):
+- Utilización de formas normales para el diseño del modelo de datos. En el caso de la tabla Pedidos, sería recomendable que idPedido sea Primary Key.
+- Evaluar las estadísticas del motor de base de datos, para determinar la creación de índices adicionales al PK. A priori, no parecería necesario ya que no se utilizan otros atributos para operaciones de búsqueda o transaccionales.
+
